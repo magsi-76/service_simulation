@@ -1,13 +1,36 @@
 {
-  "posts": [
-    { "id": "1", "title": "a title", "views": 100 },
-    { "id": "2", "title": "another title", "views": 200 }
-  ],
-  "comments": [
-    { "id": "1", "text": "a comment about post 1", "postId": "1" },
-    { "id": "2", "text": "another comment about post 1", "postId": "1" }
-  ],
-  "profile": {
-    "name": "typicode"
-  }
+  "risk": [
+    {
+      "id": 1,
+      "segment": "A",
+      "riskScore": 0.42,
+      "topSegment": "C",
+      "probability": 0.18,
+      "recommendation": "Keine Maßnahme erforderlich"
+    },
+    {
+      "id": 2,
+      "segment": "B",
+      "riskScore": 0.67,
+      "topSegment": "A",
+      "probability": 0.55,
+      "recommendation": "Weitere Analyse empfohlen"
+    },
+    {
+      "id": 3,
+      "segment": "C",
+      "riskScore": 0.83,
+      "topSegment": "D",
+      "probability": 0.72,
+      "recommendation": "Maßnahme erforderlich"
+    },
+    {
+      "id": 4,
+      "segment": "D",
+      "riskScore": 0.12,
+      "topSegment": "B",
+      "probability": 0.05,
+      "recommendation": "Keine Maßnahme"
+    }
+  ]
 }
