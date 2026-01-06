@@ -46,21 +46,22 @@ You can use the following CLI options (e.g. `npm run start -- --port=4000`):
 
 ## Time-Shifting Worker
 
-Create a `.env` file in the project root with these variables:
+Create a `.env` file in the project root with these variables (see `.env.example`):
 
-```
-ZEEBE_ADDRESS=your-zeebe-address:443
+`ZEEBE_ADDRESS=your-zeebe-address:443
 ZEEBE_CLIENT_ID=your-client-id
 ZEEBE_CLIENT_SECRET=your-client-secret
 CAMUNDA_OAUTH_URL=https://login.cloud.camunda.io/oauth/token
-ZEEBE_TOKEN_AUDIENCE=zeebe.camunda.io
-```
+ZEEBE_TOKEN_AUDIENCE=zeebe.camunda.io`
 
 Start the worker:
 
-```
-npm run worker:time-shifting
-```
+`npm run worker:time-shifting`
+
+## Documentation and Evidence
+
+- Docs: `.md/`
+- RPA evidence and screenshots: `evidence/`
 
 ## Load testing
 

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" id="Definitions_Risikoanalyse" targetNamespace="http://example.com/risikoanalyse" exporter="Camunda Web Modeler" exporterVersion="b5f5bac" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.8.0">
+<bpmn:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:zeebe="http://camunda.org/schema/zeebe/1.0" xmlns:modeler="http://camunda.org/schema/modeler/1.0" xmlns:bioc="http://bpmn.io/schema/bpmn/biocolor/1.0" xmlns:color="http://www.omg.org/spec/BPMN/non-normative/color/1.0" id="Definitions_Risikoanalyse" targetNamespace="http://example.com/risikoanalyse" exporter="Camunda Web Modeler" exporterVersion="acb706e" modeler:executionPlatform="Camunda Cloud" modeler:executionPlatformVersion="8.8.0">
   <bpmn:collaboration id="Collaboration_09zgq6z">
     <bpmn:participant id="Participant_0jg3cgq" name="Risikoanalyse Niederspannungsnetz" processRef="Process_Risikoanalyse" />
   </bpmn:collaboration>
@@ -29,30 +29,16 @@
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1ed6oyh</bpmn:incoming>
         <bpmn:incoming>Flow_1wqjlxa</bpmn:incoming>
-        <bpmn:incoming>Flow_RpaToDok</bpmn:incoming>
       </bpmn:userTask>
       <bpmn:userTask id="Task_LegacyEintragen" name="Maßnahme im Legacy-System erfassen">
         <bpmn:extensionElements>
           <zeebe:userTask />
           <zeebe:formDefinition formId="Form_Legacy" />
         </bpmn:extensionElements>
-        <bpmn:incoming>Flow_RpaFailed</bpmn:incoming>
+        <bpmn:incoming>Flow_1tppqjq</bpmn:incoming>
         <bpmn:outgoing>Flow_1ed6oyh</bpmn:outgoing>
       </bpmn:userTask>
       <bpmn:sequenceFlow id="Flow_1ed6oyh" sourceRef="Task_LegacyEintragen" targetRef="Task_Dokumentieren" />
-      <bpmn:sequenceFlow id="Flow_RpaFailed" sourceRef="Event_RpaFailed" targetRef="Task_LegacyEintragen" />
-      <bpmn:sequenceFlow id="Flow_RpaToDok" sourceRef="Task_RpaLegacy" targetRef="Task_Dokumentieren" />
-      <bpmn:serviceTask id="Task_RpaLegacy" name="RPA Bot ausfuehren">
-        <bpmn:extensionElements>
-          <zeebe:taskDefinition type="rpa-legacy-entry" retries="3" />
-        </bpmn:extensionElements>
-        <bpmn:incoming>Flow_1tppqjq</bpmn:incoming>
-        <bpmn:outgoing>Flow_RpaToDok</bpmn:outgoing>
-      </bpmn:serviceTask>
-      <bpmn:boundaryEvent id="Event_RpaFailed" name="RPA fehlgeschlagen" attachedToRef="Task_RpaLegacy">
-        <bpmn:outgoing>Flow_RpaFailed</bpmn:outgoing>
-        <bpmn:errorEventDefinition errorRef="Error_RpaFailed" />
-      </bpmn:boundaryEvent>
       <bpmn:exclusiveGateway id="Gateway_Entscheidung" name="Entscheidung?">
         <bpmn:incoming>Flow_03he7um</bpmn:incoming>
         <bpmn:outgoing>Flow_1tppqjq</bpmn:outgoing>
@@ -67,7 +53,7 @@
         <bpmn:incoming>Flow_0npyn22</bpmn:incoming>
         <bpmn:outgoing>Flow_03he7um</bpmn:outgoing>
       </bpmn:userTask>
-      <bpmn:sequenceFlow id="Flow_1tppqjq" name="Massnahme erforderlich" sourceRef="Gateway_Entscheidung" targetRef="Task_RpaLegacy">
+      <bpmn:sequenceFlow id="Flow_1tppqjq" name="Massnahme erforderlich" sourceRef="Gateway_Entscheidung" targetRef="Task_LegacyEintragen">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=entscheidung = "massnahme"</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_1wqjlxa" name="Keine Massnahme" sourceRef="Gateway_Entscheidung" targetRef="Task_Dokumentieren">
@@ -102,7 +88,7 @@
         <bpmn:incoming>Flow_10eawuo</bpmn:incoming>
         <bpmn:outgoing>Flow_00zzof7</bpmn:outgoing>
       </bpmn:serviceTask>
-      <bpmn:serviceTask id="Task_ErweiterteAnalyse" name="Erweiterte Analyse durchführen" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="12" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyODFaIiBmaWxsPSJ3aGl0ZSIvPgo8L3N2Zz4K">
+      <bpmn:serviceTask id="Task_ErweiterteAnalyse" name="Erweiterte Analyse durchführen" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="12" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyOFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=">
         <bpmn:extensionElements>
           <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
           <zeebe:ioMapping>
@@ -118,6 +104,8 @@
           <zeebe:taskHeaders>
             <zeebe:header key="elementTemplateVersion" value="12" />
             <zeebe:header key="elementTemplateId" value="io.camunda.connectors.HttpJson.v2" />
+            <zeebe:header key="resultVariable" value="riskResponse" />
+            <zeebe:header key="resultExpression" value="=response.body" />
             <zeebe:header key="retryBackoff" value="PT0S" />
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
@@ -176,10 +164,10 @@
       <bpmn:sequenceFlow id="Flow_11x831b" sourceRef="Task_DatenKorrigieren" targetRef="Task_DatenPruefen" />
       <bpmn:sequenceFlow id="Flow_0ilsyp6" sourceRef="Task_DMN_Analyseverfahren" targetRef="Gateway_Verfahren" />
       <bpmn:sequenceFlow id="Flow_10eawuo" name="Standard" sourceRef="Gateway_Verfahren" targetRef="Task_Standardanalyse">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=analyseverfahren = true</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=analyseverfahren = "standard"</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_0dtjsal" name="Erweitert" sourceRef="Gateway_Verfahren" targetRef="Task_ErweiterteAnalyse">
-        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=analyseverfahren = false</bpmn:conditionExpression>
+        <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=analyseverfahren = "erweitert"</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_0zlsi3d" name="Simulation erneut ausführen" sourceRef="Gateway_Entscheidung" targetRef="Task_DMN_Analyseverfahren">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=entscheidung = "erneut_simulieren"</bpmn:conditionExpression>
@@ -196,7 +184,7 @@
     <bpmn:userTask id="Activity_1p13w7h" name="Eintrag im Legacy zurücknehmen">
       <bpmn:extensionElements>
         <zeebe:userTask />
-        <zeebe:formDefinition formId="legacyId" />
+        <zeebe:formDefinition formId="Form_Rollback" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1vbe9sn</bpmn:incoming>
       <bpmn:outgoing>Flow_0u48277</bpmn:outgoing>
