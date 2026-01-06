@@ -148,7 +148,7 @@ Die Risikoanalyse soll in Camunda umgesetzt werden. Benutzen Sie die Camunda Clo
    - Sie k?nnen alle Komponenten von Camunda verwenden (siehe Dokumentation).
 4. Testen Sie den Workflow in unterschiedlichen Szenarien.
 
-### Hinweis
+### Hinweis I
 
 Kl?ren Sie bei Bedarf mit dem Dozenten die notwendigen Details der L?sung.
 
@@ -158,8 +158,8 @@ Kl?ren Sie bei Bedarf mit dem Dozenten die notwendigen Details der L?sung.
 
 Als Verantwortlicher f?r das Risikomanagement sind Sie auch f?r den Prozess verantwortlich. Das System f?r die Risikoanalyse war in der Vergangenheit ein Problemkind und ist ?fters ausgefallen. Das Management will wissen, ob weiterhin so viele Probleme auftreten.
 
-5. Definieren Sie sinnvolle KPIs und Reporting-Zyklen, um das Management zufrieden zu stellen.
-6. Erstellen Sie daf?r ein Dashboard in Camunda Optimize.
+5.Definieren Sie sinnvolle KPIs und Reporting-Zyklen, um das Management zufrieden zu stellen.
+6.Erstellen Sie daf?r ein Dashboard in Camunda Optimize.
 
 ---
 
@@ -167,9 +167,9 @@ Als Verantwortlicher f?r das Risikomanagement sind Sie auch f?r den Prozess vera
 
 Sie haben mittels Auswertung der zuvor definierten KPIs erkannt, dass die Risikoanalyse immer sehr lange dauert. Au?erdem wollen Sie den CO2-Verbrauch des Prozesses reduzieren. Sie haben von **Time Shifting** geh?rt und m?chten dies sinnvoll einsetzen.
 
-7. Bauen Sie Time Shifting sinnvoll in Ihren Prozess ein und berichten Sie die Verbesserung des eingesparten CO2, mindestens an das Management oder sogar an den Kunden.
+7.Bauen Sie Time Shifting sinnvoll in Ihren Prozess ein und berichten Sie die Verbesserung des eingesparten CO2, mindestens an das Management oder sogar an den Kunden.
 
-### Hinweise
+## Hinweise
 
 - Zur Vorhersage der besten Ausf?hrungszeit (geringste CO2-Kosten) kann die **Carbon Aware Computing API** genutzt werden
   - komplett kostenlos, bereitgestellt von der Karlsruher Bluehands GmbH.
@@ -183,18 +183,18 @@ Sie haben mittels Auswertung der zuvor definierten KPIs erkannt, dass die Risiko
 
 Die Erfassung der Ma?nahmen erfolgt bisher manuell ?ber das Web-Frontend des Wartungssystems.
 
-8. Entwickeln Sie einen RPA Bot mit UIPath, der den Eintrag automatisiert vornimmt.
-9. Integrieren Sie den RPA Bot in Ihren automatisierten Camunda-Prozess.
+8.Entwickeln Sie einen RPA Bot mit UIPath, der den Eintrag automatisiert vornimmt.
+9.Integrieren Sie den RPA Bot in Ihren automatisierten Camunda-Prozess.
 
-### Hinweis
+## Hinweis II
 
-Ber?cksichtigen Sie, dass der Eintrag nicht immer klappt.
+Berücksichtigen Sie, dass der Eintrag nicht immer klappt.
 
 ---
 
 ## Aufgabe ? Feedback
 
-10. Geben Sie dem Dozenten Feedback zum Kapitel Prozessautomatisierung:
+10.Geben Sie dem Dozenten Feedback zum Kapitel Prozessautomatisierung:
 
 - Was h?tten Sie mit Ihrem aktuellen Wissen ?ber Prozessautomatisierung gerne vorher gewusst?
 - Fehlt Ihnen etwas, das Sie praktisch noch gerne ausprobiert h?tten?
