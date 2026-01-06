@@ -10,7 +10,6 @@
         <bpmn:flowNodeRef>Gateway_1n5dc96</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_0wk5eaj</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_18b9vgk</bpmn:flowNodeRef>
-      <bpmn:flowNodeRef>Event_StartMessage</bpmn:flowNodeRef>
         <bpmn:flowNodeRef>Event_1h6zckn</bpmn:flowNodeRef>
       </bpmn:lane>
       <bpmn:lane id="Lane_0kniuj0" name="Systeme">
@@ -30,18 +29,30 @@
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1ed6oyh</bpmn:incoming>
         <bpmn:incoming>Flow_1wqjlxa</bpmn:incoming>
+        <bpmn:incoming>Flow_RpaToDok</bpmn:incoming>
       </bpmn:userTask>
       <bpmn:userTask id="Task_LegacyEintragen" name="Maßnahme im Legacy-System erfassen">
         <bpmn:extensionElements>
           <zeebe:userTask />
           <zeebe:formDefinition formId="Form_Legacy" />
         </bpmn:extensionElements>
-        <bpmn:incoming>Flow_1tppqjq</bpmn:incoming>
+        <bpmn:incoming>Flow_RpaFailed</bpmn:incoming>
         <bpmn:outgoing>Flow_1ed6oyh</bpmn:outgoing>
       </bpmn:userTask>
       <bpmn:sequenceFlow id="Flow_1ed6oyh" sourceRef="Task_LegacyEintragen" targetRef="Task_Dokumentieren" />
-      <bpmn:sequenceFlow id="Flow_ManuellToDok" sourceRef="Task_LegacyManuell" targetRef="Task_Dokumentieren" />
-      <bpmn:sequenceFlow id="Flow_RpaFailed" sourceRef="Event_RpaFailed" targetRef="Task_LegacyManuell" />
+      <bpmn:sequenceFlow id="Flow_RpaFailed" sourceRef="Event_RpaFailed" targetRef="Task_LegacyEintragen" />
+      <bpmn:sequenceFlow id="Flow_RpaToDok" sourceRef="Task_RpaLegacy" targetRef="Task_Dokumentieren" />
+      <bpmn:serviceTask id="Task_RpaLegacy" name="RPA Bot ausfuehren">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="rpa-legacy-entry" retries="3" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1tppqjq</bpmn:incoming>
+        <bpmn:outgoing>Flow_RpaToDok</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:boundaryEvent id="Event_RpaFailed" name="RPA fehlgeschlagen" attachedToRef="Task_RpaLegacy">
+        <bpmn:outgoing>Flow_RpaFailed</bpmn:outgoing>
+        <bpmn:errorEventDefinition errorRef="Error_RpaFailed" />
+      </bpmn:boundaryEvent>
       <bpmn:exclusiveGateway id="Gateway_Entscheidung" name="Entscheidung?">
         <bpmn:incoming>Flow_03he7um</bpmn:incoming>
         <bpmn:outgoing>Flow_1tppqjq</bpmn:outgoing>
@@ -56,7 +67,7 @@
         <bpmn:incoming>Flow_0npyn22</bpmn:incoming>
         <bpmn:outgoing>Flow_03he7um</bpmn:outgoing>
       </bpmn:userTask>
-      <bpmn:sequenceFlow id="Flow_1tppqjq" name="Massnahme erforderlich" sourceRef="Gateway_Entscheidung" targetRef="Task_LegacyEintragen">
+      <bpmn:sequenceFlow id="Flow_1tppqjq" name="Massnahme erforderlich" sourceRef="Gateway_Entscheidung" targetRef="Task_RpaLegacy">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=entscheidung = "massnahme"</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_1wqjlxa" name="Keine Massnahme" sourceRef="Gateway_Entscheidung" targetRef="Task_Dokumentieren">
@@ -107,8 +118,6 @@
           <zeebe:taskHeaders>
             <zeebe:header key="elementTemplateVersion" value="12" />
             <zeebe:header key="elementTemplateId" value="io.camunda.connectors.HttpJson.v2" />
-            <zeebe:header key="resultVariable" value="riskResponse" />
-            <zeebe:header key="resultExpression" value="=response.body" />
             <zeebe:header key="retryBackoff" value="PT0S" />
           </zeebe:taskHeaders>
         </bpmn:extensionElements>
@@ -116,7 +125,7 @@
         <bpmn:outgoing>Flow_1dxi185</bpmn:outgoing>
       </bpmn:serviceTask>
       <bpmn:exclusiveGateway id="Gateway_Verfahren" name="Standard oder Erweitert?">
-        <bpmn:incoming>Flow_AfterWait</bpmn:incoming>
+        <bpmn:incoming>Flow_0ilsyp6</bpmn:incoming>
         <bpmn:outgoing>Flow_10eawuo</bpmn:outgoing>
         <bpmn:outgoing>Flow_0dtjsal</bpmn:outgoing>
       </bpmn:exclusiveGateway>
@@ -128,46 +137,6 @@
         <bpmn:incoming>Flow_0zlsi3d</bpmn:incoming>
         <bpmn:outgoing>Flow_0ilsyp6</bpmn:outgoing>
       </bpmn:businessRuleTask>
-      <bpmn:serviceTask id="Task_CO2Forecast" name="CO2 Forecast abrufen" zeebe:modelerTemplate="io.camunda.connectors.HttpJson.v2" zeebe:modelerTemplateVersion="12" zeebe:modelerTemplateIcon="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTE3LjAzMzUgOC45OTk5N0MxNy4wMzM1IDEzLjQ0NzUgMTMuNDI4MSAxNy4wNTI5IDguOTgwNjUgMTcuMDUyOUM0LjUzMzE2IDE3LjA1MjkgMC45Mjc3NjUgMTMuNDQ3NSAwLjkyNzc2NSA4Ljk5OTk3QzAuOTI3NzY1IDQuNTUyNDggNC41MzMxNiAwLjk0NzA4MyA4Ljk4MDY1IDAuOTQ3MDgzQzEzLjQyODEgMC45NDcwODMgMTcuMDMzNSA0LjU1MjQ4IDE3LjAzMzUgOC45OTk5N1oiIGZpbGw9IiM1MDU1NjIiLz4KPHBhdGggZD0iTTQuOTMxMjYgMTQuMTU3MUw2Ljc4MTA2IDMuNzE0NzFIMTAuMTM3NUMxMS4xOTE3IDMuNzE0NzEgMTEuOTgyNCAzLjk4MzIzIDEyLjUwOTUgNC41MjAyN0MxMy4wNDY1IDUuMDQ3MzYgMTMuMzE1IDUuNzMzNTggMTMuMzE1IDYuNTc4OTJDMTMuMzE1IDcuNDQ0MTQgMTMuMDcxNCA4LjE1NTIyIDEyLjU4NDEgOC43MTIxNUMxMi4xMDY3IDkuMjU5MTMgMTEuNDU1MyA5LjYzNzA1IDEwLjYyOTggOS44NDU5TDEyLjA2MTkgMTQuMTU3MUgxMC4zMzE1TDkuMDMzNjQgMTAuMDI0OUg3LjI0MzUxTDYuNTEyNTQgMTQuMTU3MUg0LjkzMTI2Wk03LjQ5NzExIDguNTkyODFIOS4yNDI0OEM5Ljk5ODMyIDguNTkyODEgMTAuNTkwMSA4LjQyMzc0IDExLjAxNzcgOC4wODU2MUMxMS40NTUzIDcuNzM3NTMgMTEuNjc0MSA3LjI2NTEzIDExLjY3NDEgNi42Njg0MkMxMS42NzQxIDYuMTkxMDYgMTEuNTI0OSA1LjgxODExIDExLjIyNjUgNS41NDk1OUMxMC45MjgyIDUuMjcxMTMgMTAuNDU1OCA1LjEzMTkgOS44MDkzNiA1LjEzMTlIOC4xMDg3NEw3LjQ5NzExIDguNTkyOFoiIGZpbGw9IndoaXRlIi8+Cjwvc3ZnPgo=">
-        <bpmn:extensionElements>
-          <zeebe:taskDefinition type="io.camunda:http-json:1" retries="3" />
-          <zeebe:ioMapping>
-            <zeebe:input source="noAuth" target="authentication.type" />
-            <zeebe:input source="GET" target="method" />
-            <zeebe:input source="=carbonApiUrl" target="url" />
-            <zeebe:input source="=true" target="storeResponse" />
-            <zeebe:input source="=20" target="connectionTimeoutInSeconds" />
-            <zeebe:input source="=20" target="readTimeoutInSeconds" />
-            <zeebe:input source="=false" target="ignoreNullValues" />
-          </zeebe:ioMapping>
-          <zeebe:taskHeaders>
-            <zeebe:header key="elementTemplateVersion" value="12" />
-            <zeebe:header key="elementTemplateId" value="io.camunda.connectors.HttpJson.v2" />
-            <zeebe:header key="resultVariable" value="co2Forecast" />
-            <zeebe:header key="resultExpression" value="=response.body" />
-            <zeebe:header key="retryBackoff" value="PT0S" />
-          </zeebe:taskHeaders>
-        </bpmn:extensionElements>
-        <bpmn:incoming>Flow_0ilsyp6</bpmn:incoming>
-        <bpmn:outgoing>Flow_TimeShiftCalc</bpmn:outgoing>
-      </bpmn:serviceTask>
-      <bpmn:serviceTask id="Task_TimeShiftCalc" name="Optimale Startzeit berechnen">
-        <bpmn:extensionElements>
-          <zeebe:taskDefinition type="time-shifting" retries="3" />
-          <zeebe:ioMapping>
-            <zeebe:input source="=co2Forecast" target="co2Forecast" />
-          </zeebe:ioMapping>
-        </bpmn:extensionElements>
-        <bpmn:incoming>Flow_TimeShiftCalc</bpmn:incoming>
-        <bpmn:outgoing>Flow_WaitForGreen</bpmn:outgoing>
-      </bpmn:serviceTask>
-      <bpmn:intermediateCatchEvent id="Event_WaitForGreen" name="Time Shifting warten">
-        <bpmn:incoming>Flow_WaitForGreen</bpmn:incoming>
-        <bpmn:outgoing>Flow_AfterWait</bpmn:outgoing>
-        <bpmn:timerEventDefinition>
-          <bpmn:timeDate>=shiftStartTime</bpmn:timeDate>
-        </bpmn:timerEventDefinition>
-      </bpmn:intermediateCatchEvent>
       <bpmn:sequenceFlow id="Flow_03he7um" sourceRef="Task_ErgebnisBewerten" targetRef="Gateway_Entscheidung" />
       <bpmn:sequenceFlow id="Flow_0npyn22" sourceRef="Gateway_AnalyseMerge" targetRef="Task_ErgebnisBewerten" />
       <bpmn:sequenceFlow id="Flow_00zzof7" sourceRef="Task_Standardanalyse" targetRef="Gateway_AnalyseMerge" />
@@ -205,10 +174,7 @@
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=fehlerInDaten = true</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_11x831b" sourceRef="Task_DatenKorrigieren" targetRef="Task_DatenPruefen" />
-      <bpmn:sequenceFlow id="Flow_0ilsyp6" sourceRef="Task_DMN_Analyseverfahren" targetRef="Task_CO2Forecast" />
-      <bpmn:sequenceFlow id="Flow_TimeShiftCalc" sourceRef="Task_CO2Forecast" targetRef="Task_TimeShiftCalc" />
-      <bpmn:sequenceFlow id="Flow_WaitForGreen" sourceRef="Task_TimeShiftCalc" targetRef="Event_WaitForGreen" />
-      <bpmn:sequenceFlow id="Flow_AfterWait" sourceRef="Event_WaitForGreen" targetRef="Gateway_Verfahren" />
+      <bpmn:sequenceFlow id="Flow_0ilsyp6" sourceRef="Task_DMN_Analyseverfahren" targetRef="Gateway_Verfahren" />
       <bpmn:sequenceFlow id="Flow_10eawuo" name="Standard" sourceRef="Gateway_Verfahren" targetRef="Task_Standardanalyse">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=analyseverfahren = true</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
@@ -230,7 +196,7 @@
     <bpmn:userTask id="Activity_1p13w7h" name="Eintrag im Legacy zurücknehmen">
       <bpmn:extensionElements>
         <zeebe:userTask />
-        <zeebe:formDefinition formId="Form_Legacy" />
+        <zeebe:formDefinition formId="legacyId" />
       </bpmn:extensionElements>
       <bpmn:incoming>Flow_1vbe9sn</bpmn:incoming>
       <bpmn:outgoing>Flow_0u48277</bpmn:outgoing>
@@ -250,16 +216,11 @@
       </bpmn:extensionElements>
       <bpmn:outgoing>Flow_1u67nck</bpmn:outgoing>
     </bpmn:startEvent>
-    <bpmn:startEvent id="Event_StartMessage" name="Start Risikoanalyse (Message)">
-      <bpmn:outgoing>Flow_start_message</bpmn:outgoing>
-      <bpmn:messageEventDefinition id="MessageEventDefinition_Start" messageRef="Message_3qa12o2" />
-    </bpmn:startEvent>
     <bpmn:boundaryEvent id="Event_1h6zckn" name="Risikoanalyse durch Netzplaner abgebrochen" attachedToRef="Activity_116j7ih">
       <bpmn:outgoing>Flow_1prjwpv</bpmn:outgoing>
       <bpmn:messageEventDefinition id="MessageEventDefinition_03tm1gp" messageRef="Message_1suq25v" />
     </bpmn:boundaryEvent>
     <bpmn:sequenceFlow id="Flow_1u67nck" sourceRef="Event_18b9vgk" targetRef="Activity_116j7ih" />
-    <bpmn:sequenceFlow id="Flow_start_message" sourceRef="Event_StartMessage" targetRef="Activity_116j7ih" />
     <bpmn:sequenceFlow id="Flow_1khbqc1" sourceRef="Activity_116j7ih" targetRef="EndEvent_Abgeschlossen" />
     <bpmn:sequenceFlow id="Flow_1vbe9sn" name="Ja" sourceRef="Gateway_1n5dc96" targetRef="Activity_1p13w7h">
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=massnahmeErfasst = true</bpmn:conditionExpression>
@@ -270,7 +231,6 @@
       <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=massnahmeErfasst = false</bpmn:conditionExpression>
     </bpmn:sequenceFlow>
   </bpmn:process>
-  <bpmn:error id="Error_RpaFailed" name="RPA failed" errorCode="RPA_FAILED" />
   <bpmn:message id="Message_3qa12o2" name="StartRisikoAnalyse">
     <bpmn:extensionElements>
       <zeebe:subscription correlationKey="=auftragId" />
@@ -483,12 +443,6 @@
           <dc:Bounds x="512" y="259" width="71" height="40" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Event_StartMessage_di" bpmnElement="Event_StartMessage">
-        <dc:Bounds x="529" y="239" width="36" height="36" />
-        <bpmndi:BPMNLabel>
-          <dc:Bounds x="502" y="199" width="84" height="40" />
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Event_1p4pp54_di" bpmnElement="Event_1h6zckn">
         <dc:Bounds x="1019" y="369" width="36" height="36" />
         <bpmndi:BPMNLabel>
@@ -497,10 +451,6 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNEdge id="Flow_1u67nck_di" bpmnElement="Flow_1u67nck">
         <di:waypoint x="547" y="345" />
-        <di:waypoint x="547" y="387" />
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="Flow_start_message_di" bpmnElement="Flow_start_message">
-        <di:waypoint x="547" y="255" />
         <di:waypoint x="547" y="387" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1khbqc1_di" bpmnElement="Flow_1khbqc1">
