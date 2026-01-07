@@ -29,16 +29,30 @@
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_1ed6oyh</bpmn:incoming>
         <bpmn:incoming>Flow_1wqjlxa</bpmn:incoming>
+        <bpmn:incoming>Flow_RpaSuccess</bpmn:incoming>
       </bpmn:userTask>
       <bpmn:userTask id="Task_LegacyEintragen" name="Maßnahme im Legacy-System erfassen">
         <bpmn:extensionElements>
           <zeebe:userTask />
           <zeebe:formDefinition formId="Form_Legacy" />
         </bpmn:extensionElements>
-        <bpmn:incoming>Flow_1tppqjq</bpmn:incoming>
+        <bpmn:incoming>Flow_RpaFailed</bpmn:incoming>
         <bpmn:outgoing>Flow_1ed6oyh</bpmn:outgoing>
       </bpmn:userTask>
       <bpmn:sequenceFlow id="Flow_1ed6oyh" sourceRef="Task_LegacyEintragen" targetRef="Task_Dokumentieren" />
+      <bpmn:sequenceFlow id="Flow_RpaFailed" sourceRef="Event_RpaFailed" targetRef="Task_LegacyEintragen" />
+      <bpmn:sequenceFlow id="Flow_RpaSuccess" sourceRef="Task_RpaService" targetRef="Task_Dokumentieren" />
+      <bpmn:serviceTask id="Task_RpaService" name="RPA Bot ausführen">
+        <bpmn:extensionElements>
+          <zeebe:taskDefinition type="rpa-legacy-entry" retries="3" />
+        </bpmn:extensionElements>
+        <bpmn:incoming>Flow_1tppqjq</bpmn:incoming>
+        <bpmn:outgoing>Flow_RpaSuccess</bpmn:outgoing>
+      </bpmn:serviceTask>
+      <bpmn:boundaryEvent id="Event_RpaFailed" name="RPA fehlgeschlagen" attachedToRef="Task_RpaService">
+        <bpmn:outgoing>Flow_RpaFailed</bpmn:outgoing>
+        <bpmn:errorEventDefinition errorRef="Error_RpaFailed" />
+      </bpmn:boundaryEvent>
       <bpmn:exclusiveGateway id="Gateway_Entscheidung" name="Entscheidung?">
         <bpmn:incoming>Flow_03he7um</bpmn:incoming>
         <bpmn:outgoing>Flow_1tppqjq</bpmn:outgoing>
@@ -53,7 +67,7 @@
         <bpmn:incoming>Flow_0npyn22</bpmn:incoming>
         <bpmn:outgoing>Flow_03he7um</bpmn:outgoing>
       </bpmn:userTask>
-      <bpmn:sequenceFlow id="Flow_1tppqjq" name="Massnahme erforderlich" sourceRef="Gateway_Entscheidung" targetRef="Task_LegacyEintragen">
+      <bpmn:sequenceFlow id="Flow_1tppqjq" name="Massnahme erforderlich" sourceRef="Gateway_Entscheidung" targetRef="Task_RpaService">
         <bpmn:conditionExpression xsi:type="bpmn:tFormalExpression">=entscheidung = "massnahme"</bpmn:conditionExpression>
       </bpmn:sequenceFlow>
       <bpmn:sequenceFlow id="Flow_1wqjlxa" name="Keine Massnahme" sourceRef="Gateway_Entscheidung" targetRef="Task_Dokumentieren">
@@ -151,11 +165,8 @@
       </bpmn:exclusiveGateway>
       <bpmn:userTask id="Task_DatenPruefen" name="Daten prüfen">
         <bpmn:extensionElements>
-          <zeebe:formDefinition formId="Form_Netzdaten" />
+          <zeebe:formDefinition formId="FormDatenpruefung" />
           <zeebe:userTask />
-          <zeebe:ioMapping>
-            <zeebe:output source="=if fehlerInDaten = null then false else fehlerInDaten" target="fehlerInDaten" />
-          </zeebe:ioMapping>
         </bpmn:extensionElements>
         <bpmn:incoming>Flow_11x831b</bpmn:incoming>
         <bpmn:incoming>Flow_10saqgl</bpmn:incoming>
@@ -237,6 +248,7 @@
       <zeebe:subscription correlationKey="=auftragId" />
     </bpmn:extensionElements>
   </bpmn:message>
+  <bpmn:error id="Error_RpaFailed" name="RPA_FAILED" errorCode="RPA_FAILED" />
   <bpmndi:BPMNDiagram id="BPMNDiagram_1">
     <bpmndi:BPMNPlane id="BPMNPlane_1" bpmnElement="Collaboration_09zgq6z">
       <bpmndi:BPMNShape id="Participant_0jg3cgq_di" bpmnElement="Participant_0jg3cgq" isHorizontal="true">
@@ -264,6 +276,12 @@
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Task_LegacyEintragen" bpmnElement="Task_LegacyEintragen">
         <dc:Bounds x="1757" y="817" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_RpaService" bpmnElement="Task_RpaService">
+        <dc:Bounds x="1690" y="817" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Event_RpaFailed" bpmnElement="Event_RpaFailed">
+        <dc:Bounds x="1765" y="883" width="30" height="30" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Gateway_Entscheidung" bpmnElement="Gateway_Entscheidung" isMarkerVisible="true">
         <dc:Bounds x="1640" y="832" width="50" height="50" />
@@ -293,11 +311,11 @@
           <dc:Bounds x="1050" y="636" width="73" height="27" />
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="Shape_Task_DMN" bpmnElement="Task_DMN_Analyseverfahren">
-        <dc:Bounds x="805" y="609" width="100" height="80" />
-      </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Task_TimeShifting" bpmnElement="Task_TimeShifting">
         <dc:Bounds x="915" y="706" width="100" height="80" />
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="Shape_Task_DMN" bpmnElement="Task_DMN_Analyseverfahren">
+        <dc:Bounds x="805" y="609" width="100" height="80" />
       </bpmndi:BPMNShape>
       <bpmndi:BPMNShape id="Shape_Task_DatenKorrigieren" bpmnElement="Task_DatenKorrigieren">
         <dc:Bounds x="685" y="409" width="100" height="80" />
@@ -323,10 +341,18 @@
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1tppqjq_di" bpmnElement="Flow_1tppqjq">
         <di:waypoint x="1690" y="857" />
-        <di:waypoint x="1757" y="857" />
+        <di:waypoint x="1690" y="857" />
         <bpmndi:BPMNLabel>
           <dc:Bounds x="1679" y="823" width="63" height="27" />
         </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_RpaFailed_di" bpmnElement="Flow_RpaFailed">
+        <di:waypoint x="1780" y="898" />
+        <di:waypoint x="1780" y="857" />
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="Flow_RpaSuccess_di" bpmnElement="Flow_RpaSuccess">
+        <di:waypoint x="1790" y="857" />
+        <di:waypoint x="1907" y="857" />
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="Flow_1wqjlxa_di" bpmnElement="Flow_1wqjlxa">
         <di:waypoint x="1665" y="832" />
