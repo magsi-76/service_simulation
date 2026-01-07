@@ -79,3 +79,7 @@ Klarer Überblick über Prozessleistung, Analysepfade, Fehler und RPA‑Risiken.
 
 - **Wöchentlich:** KPIs + Ausreißer
 - **Monatlich:** Trendvergleich + CO2‑Optimierungseffekt
+
+## Nachweis
+
+![Optimize Dashboard](../evidence/optimize_dashboard.png)
