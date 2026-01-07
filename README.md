@@ -63,6 +63,13 @@ Start the worker:
 - Docs: `.md/`
 - RPA evidence and screenshots: `evidence/`
 
+## Gruppenteilnehmer
+
+- Emirhan Yasa (91790)
+- Maximilian Zaharia (91309)
+- David Daglioglu (90997)
+- Niklas Lisker (88350)
+
 ## Load testing
 
 To do a load test start the server (`npm start`) and run `npm run load-test`. Have a look at the resulting report in `reports/test-run-report.json.html`.
