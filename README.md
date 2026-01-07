@@ -65,7 +65,7 @@ Start the worker:
 
 ## Gruppenteilnehmer
 
-- Emirhan Yasa (91790)
+- Emirhan Yasa [Product Owner] (91790)
 - Maximilian Zaharia (91309)
 - David Daglioglu (90997)
 - Niklas Lisker (88350)
