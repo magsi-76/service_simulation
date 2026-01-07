@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
+    "worker:time-shifting": "node worker/run-time-shifting.js",
     "load-test": "curl -f -LI http://localhost:3000/profile && artillery run --output reports/test-run-report.json asciiart-load-test.yml && artillery report reports/test-run-report.json",
     "prepare": "husky install"
   },
@@ -16,6 +17,7 @@
     "url": "git+https://github.com/lwluc/slowed-down-json-server.git"
   },
   "dependencies": {
+    "@camunda8/sdk": "^8.8.4",
     "command-line-args": "^6.0.1",
     "express": "^4.21.1",
     "json-server": "0.17.4"
