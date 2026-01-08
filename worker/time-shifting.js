@@ -1,4 +1,5 @@
 import { Camunda8 } from '@camunda8/sdk';
+import 'dotenv/config';
 
 const zeebeAddress = process.env.ZEEBE_ADDRESS;
 const zeebeClientId = process.env.ZEEBE_CLIENT_ID;
