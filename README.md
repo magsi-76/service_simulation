@@ -73,3 +73,7 @@ Start the worker:
 ## Load testing
 
 To do a load test start the server (`npm start`) and run `npm run load-test`. Have a look at the resulting report in `reports/test-run-report.json.html`.
+
+## Temp
+
+Invoke-RestMethod -Method Post -Uri "http://localhost:3000/abort" -ContentType "application/json" -Body '{"auftragId":"1"}'
