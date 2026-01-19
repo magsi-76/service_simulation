@@ -74,6 +74,18 @@ Start the worker:
 
 To do a load test start the server (`npm start`) and run `npm run load-test`. Have a look at the resulting report in `reports/test-run-report.json.html`.
 
-## Temp
+## Risikoanalyse abbrechen
 
 Invoke-RestMethod -Method Post -Uri "http://localhost:3000/abort" -ContentType "application/json" -Body '{"auftragId":"1"}'
+
+## Ngrok starten
+
+ngrok http 3000
+
+## Den Server starten
+
+json-server --watch db.json --port 3000
+
+## Den TimeShifting Worker starten
+
+npm run worker:time-shifting
