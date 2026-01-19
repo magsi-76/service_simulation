@@ -27,9 +27,6 @@ To start the server run the following commands:
 # Install the dependencies
 npm install
 
-# Start the Server
-npm start
-```
 
 You should see something like:
 
@@ -63,29 +60,27 @@ Start the worker:
 - Docs: `.md/`
 - RPA evidence and screenshots: `evidence/`
 
-## Gruppenteilnehmer
+## Group Members
 
 - Emirhan Yasa [Product Owner] (91790)
 - Maximilian Zaharia (91309)
 - David Daglioglu (90997)
 - Niklas Lisker (88350)
 
-## Load testing
 
-To do a load test start the server (`npm start`) and run `npm run load-test`. Have a look at the resulting report in `reports/test-run-report.json.html`.
-
-## Risikoanalyse abbrechen
+## Invoke
 
 Invoke-RestMethod -Method Post -Uri "http://localhost:3000/abort" -ContentType "application/json" -Body '{"auftragId":"1"}'
 
-## Ngrok starten
+## Ngrok
 
 ngrok http 3000
 
-## Den Server starten
+## Server
 
 json-server --watch db.json --port 3000
 
-## Den TimeShifting Worker starten
+## TimeShifting Worker
 
 npm run worker:time-shifting
+```
